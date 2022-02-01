@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Praktek Dasar Vue </title>
+
+</head>
+<style>
+    .box {
+        padding: 10px;
+        background: rgb(213, 213, 213);
+        border-radius: 10px;
+        margin: 10px;
+    }
+
+    .completed {
+        background-color: rgb(205, 255, 213);
+    }
+
+    body {
+        margin: 50px auto;
+        width: 80%;
+        font-family: sans-serif;
+    }
+
+    #form_add input {
+        margin-bottom: 10px;
+        font-size: 20px;
+    }
+    button{
+        font-size: 20px;
+    }
+</style>
+
+<body>
+    <div id="vue">
+        <h1>Daftar Pelajaran</h1>
+        <p>Total Selesai : {{ completedItems }}</p>
+
+        <div>
+            <button @click="showForm = !showForm">Toggle Form</button>
+            <div v-show="showForm">
+                <h3> Add New Data</h3>
+                <form @submit.prevent="submitForm" id="form_add">
+                    <input type="text" name="title" placeholder="title"> <br>
+                    <input type="text" name="desc" placeholder="desc"> <br>
+                    <input type="text" name="image" placeholder="image"> <br>
+                    <button type="submit">Add New</button>
+                </form>
+
+            </div>
+
+        </div>
+        <div v-for="item in items" :key="item.title" class="box" :class="{completed : item.state}">
+            <h2>{{ item.title }}</h2>
+            <p>{{ item.desc }}</p>
+            <img :src="'img/'+ item.image" width="50">
+            <input type="checkbox" :checked="item.state" @change="item.state =! item.state">
+        </div>
+
+
+    </div>
+</body>
+<script src="https://unpkg.com/vue@next"></script>
+<script>
+
+    Vue.createApp({
+        data() {
+            return {
+                showForm: false,
+                items: [
+                    { title: "Vue", desc: "What a green", image: "vue.png", state: false },
+                    { title: "React", desc: "Blue From Facebok", image: "react.png", state: false }
+                ]
+            }
+        },
+        methods: {
+            submitForm(event) {
+                const els = event.target.elements;
+                let title = els.title.value;
+                let desc = els.desc.value;
+                let image = els.image.value;
+
+                this.items.push({
+                    title: title,
+                    desc: desc,
+                    image: image,
+                    state: false
+                })
+
+                els.title.value = ""
+                els.desc.value = ""
+                els.image.value = ""
+
+                this.showForm = false
+            }
+        },
+        computed: {
+            completedItems() {
+                return this.items.filter((item) => item.state == true).length;
+            }
+        }
+    }).mount('#vue');
+</script>
+
+</html>
